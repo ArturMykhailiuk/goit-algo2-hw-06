@@ -1,8 +1,6 @@
 import string
-
 from concurrent.futures import ThreadPoolExecutor
 from collections import defaultdict
-
 import requests
 import matplotlib.pyplot as plt
 
@@ -61,6 +59,21 @@ def map_reduce(text, search_words=None):
     return dict(reduced_values)
 
 
+def visualize_top_words(result, top_n=10):
+    """
+    Візуалізує топ N слів з найвищою частотою використання.
+    """
+    sorted_result = sorted(result.items(), key=lambda x: x[1], reverse=True)
+    top_words = sorted_result[:top_n]
+    words, frequencies = zip(*top_words)
+    plt.barh(words, frequencies)
+    plt.xlabel("Частота використання")
+    plt.ylabel("Слово")
+    plt.title(f"Топ {top_n} слів з найвищою частотою використання")
+    plt.xticks(rotation=90)
+    plt.show()
+
+
 if __name__ == "__main__":
     # Вхідний текст для обробки
     url = "https://gutenberg.net.au/ebooks01/0100021.txt"
@@ -83,16 +96,7 @@ if __name__ == "__main__":
 
         print("Результат підрахунку слів:", result)
 
-        sorted_result = sorted(result.items(), key=lambda x: x[1], reverse=False)
-
         # Візуалізація топ-слов з найвищою частотою використання
-        top_words = sorted_result[:10]
-        words, frequencies = zip(*top_words)
-        plt.barh(words, frequencies)
-        plt.xlabel("Слово")
-        plt.ylabel("Частота використання")
-        plt.title("Топ слова з найвищою частотою використання")
-        plt.xticks(rotation=90)
-        plt.show()
+        visualize_top_words(result, top_n=10)
     else:
         print("Помилка: Не вдалося отримати вхідний текст.")
